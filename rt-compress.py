@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import random,sys,math
-R,f,i,w,Q,C,V=random.random,float,int,sys.stdout.write,math.sqrt,math.ceil,lambda x:reversed(range(x))
+R,f,i,w,Q,C,V=random.random,float,int,sys.stdout.write,math.sqrt,math.ceil,lambda x:range(x-1,-1,-1)
 def T(o,d,t,n):
  t,m,p=1e9,0,-o.z/d.z
  if.01<p:t,n,m=p,v(z=1),1
@@ -24,7 +24,7 @@ def S(o,d):
  return v(p,p,p)+S(h,r)*.5
 class v(object):
  def __init__(s,x=0.,y=0.,z=0.):s.x,s.y,s.z=f(x),f(y),f(z)
- __add__,__mull__,__mod__,__xor__,__neg__=lambda s,r:v(s.x+r.x,s.y+r.y,s.z+r.z),lambda s,f:v(s.x*f,s.y*f,s.z*f),lambda s,r:s.x*r.x+s.y*r.y+s.z*r.z,lambda s,r:v(s.y*r.z-s.z*r.y,s.z*r.x-s.x*r.z,s.x*r.y-s.y*r.x),lambda s:s*(1./Q(s%s))
+ __add__,__mul__,__mod__,__xor__,__neg__=lambda s,r:v(s.x+r.x,s.y+r.y,s.z+r.z),lambda s,f:v(s.x*f,s.y*f,s.z*f),lambda s,r:s.x*r.x+s.y*r.y+s.z*r.z,lambda s,r:v(s.y*r.z-s.z*r.y,s.z*r.x-s.x*r.z,s.x*r.y-s.y*r.x),lambda s:s*(1./Q(s%s))
 w("P6 512 512 255 ")
 g=-v(-6,-16)
 a=-(v(z=1)^g)*.002
