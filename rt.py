@@ -37,7 +37,7 @@ def Trace(o, d, t, n):
     m = 0
     p = -o.z/d.z
 
-    if .01 < p:
+    if p > .01:
         t = p
         n = vector(0, 0, 1)
         m = 1
@@ -85,7 +85,7 @@ def Sample(o, d):
     # calculate the color 'p' 
     p = (l % r * (1 if b > 0 else 0))**99
 
-    if m %2 == 1:
+    if m % 2 == 1:
         h = h * .2
         # red or white tile
         if (ceil(h.x)+ceil(h.y)) % 2 == 1:

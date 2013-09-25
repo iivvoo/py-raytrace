@@ -23,7 +23,7 @@ def S(o,d):
   return(v(3,1,1)if(C(h.x)+C(h.y))%2 else v(3,3,3))*(b*.2+.1)
  return v(p,p,p)+S(h,r)*.5
 class v(object):
- def __init__(s,x=0.,y=0.,z=0.):s.x,s.y,s.z=f(x),f(y),f(z)
+ def __init__(s,x=0,y=0,z=0):s.x,s.y,s.z=f(x),f(y),f(z)
  __add__,__mul__,__mod__,__xor__,__neg__=lambda s,r:v(s.x+r.x,s.y+r.y,s.z+r.z),lambda s,f:v(s.x*f,s.y*f,s.z*f),lambda s,r:s.x*r.x+s.y*r.y+s.z*r.z,lambda s,r:v(s.y*r.z-s.z*r.y,s.z*r.x-s.x*r.z,s.x*r.y-s.y*r.x),lambda s:s*(1./Q(s%s))
 w("P6 512 512 255 ")
 g=-v(-6,-16)
