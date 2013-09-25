@@ -1,17 +1,38 @@
 #!/usr/bin/python
 
-# http://webcache.googleusercontent.com/search?newwindow=1&client=ubuntu&hs=WH3&channel=fs&biw=1573&bih=804&sclient=psy-ab&q=cache%3Ahttp%3A%2F%2Ffabiensanglard.net%2FrayTracing_back_of_business_card%2Findex.php&oq=cache%3Ahttp%3A%2F%2Ffabiensanglard.net%2FrayTracing_back_of_business_card%2Findex.php&gs_l=serp.3..0l4.14543.18574.1.19003.45.16.9.6.6.7.207.1233.8j5j1.14.0....2...1c.1.27.psy-ab..61.23.641.0fjXozWL1vM&pbx=1
-
 from math import sqrt, ceil
-import random
+from random import random
 import sys
 
-G = [247570,280596,280600,249748,18578,18577,231184,16,16]
+world = [
+"0000000000000010000",  # "              1    ",
+"0000000000000010000",  # "              1    ",
+"0111000011100010000",  # " 111    111   1    ",
+"0000100100010010001",  # "    1  1   1  1   1",
+"0000100100010010010",  # "    1  1   1  1  1 ",
+"0111100111110010100",  # " 1111  11111  1 1  ",
+"1000100100000011000",  # "1   1  1      11   ",
+"1000100100000010100",  # "1   1  1      1 1  ",
+"0111100011100010010",  # " 1111   111   1  1 ",
+]
+
+ivo_world = [
+"1111000000000000000",
+"0110000000000000000",
+"0110000000000000000",
+"0110000000000000000",
+"0110110000110011100",
+"0110011001100110110",
+"0110011001101100011",
+"0110001111000110110",
+"1111000110000011100",
+]
+
+# G describes a 19 column 9 row "world" containing spheres, where a 1-bit is a sphere
+G = [int(l, 2) for l in reversed(world)]
 
 def Random():
     return random.random()
-
-R = Random
 
 def Trace(o, d, t, n):
     """ The intersection test for line [o, v] """
@@ -35,14 +56,12 @@ def Trace(o, d, t, n):
                 if q > 0:
                     s = -b-sqrt(q)
 
-                    if s < t and s > 0.01: ## XXX rewrite 
+                    if 0.01 < s < t:
                         t = s
                         n = -(p+d*t)
                         m = 2
 
     return m, t, n
-
-T = Trace
 
 def Sample(o, d):
     t = 0.0
@@ -55,7 +74,7 @@ def Sample(o, d):
 
     # A sphere was maybe hit
     h = o+d*t
-    l = -(vector(9+R(), 9+R(), 16) + h * -1)
+    l = -(vector(9+random(), 9+random(), 16) + h * -1)
     r = d + n * (n%d*-2)
 
     # lambertian factor
@@ -79,66 +98,57 @@ def Sample(o, d):
     # m == 2 sphere was hit
     return vector(p, p, p) + Sample(h, r) * .5
 
-S = Sample
-
 class vector(object):
     def __init__(self, x=0.0, y=0.0, z=0.0):
         self.x = float(x)
         self.y = float(y)
         self.z = float(z)
 
-    def add(self, v): # +
+    def __add__(self, v): # +, add vector
         return vector(self.x+v.x, self.y+v.y, self.z+v.z)
 
-    __add__ = add
-
-    def scale(self, f): # *
+    def __mul__(self, f): # *, scale vector
         return vector(self.x*f, self.y*f, self.z*f)
 
-    __mul__ = scale
-
-    def dot(self, v): # %
+    def __mod__(self, v): # %, dot product
         return self.x * v.x + self.y * v.y + self.z * v.z
 
-    __mod__ = dot
-
-    def cross(self, v): # ^
+    def __xor__(self, v): # ^, cross product
         return vector(self.y*v.z-self.z*v.y,
                       self.z*v.x-self.x*v.z,
                       self.x*v.y-self.y*v.x)
 
-    __xor__ = cross
-
-    def normalize(self): # !
+    def __neg__(self): # -, normalization
         return self * (1.0/sqrt(self % self))
-   
-    __neg__ = normalize
 
     def __str__(self):
         return "Vector(%f, %f, %f)" % (self.x, self.y, self.z)
 
+class color(vector):
+    pass
+
+
 def main():
     sys.stdout.write("P6 512 512 255 ")
-    
-    ## ! has precedence over * ?
+
     g = -vector(-6, -16, 0)  # camera direction
     a = -(vector(0,0,1)^g)*.002
     b = -(g^a) * 0.002
     c = (a+b)*-256+g
 
-    raycount = 64
+    viewpoint = vector(17, 16, 8)
 
     rr,gg,bb = 13, 13, 13
     for y in range(511, -1, -1):
         for x in range(511, -1, -1):
-            p = vector(rr, gg, bb)
-            for r in range(raycount-1, -1, -1):
-                t = a*(R()-.5)*99+b*(R()-.5)*99
-                p = Sample(vector(17, 16, 8)+t,
-                           -(t*-1+(a*(R()+x)+b*(y+R())+c)*16)
+            p = color(rr, gg, bb) # actually a color
+            for r in range(63, -1, -1):
+                t = a*(random()-.5)*99+b*(random()-.5)*99
+                p = Sample(viewpoint+t,
+                           -(t*-1+(a*(random()+x)+b*(y+random())+c)*16)
                           )*3.5+p
 
-            sys.stdout.write("%s%s%s" % (chr(int(p.x)), chr(int(p.y)), chr(int(p.z))))
+            sys.stdout.write("%c%c%c" % (int(p.x), int(p.y), int(p.z)))
         sys.stdout.flush()
 
 if __name__ == '__main__':
