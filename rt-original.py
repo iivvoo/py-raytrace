@@ -123,7 +123,7 @@ if __name__ == '__main__':
     g = -v(-6, -16, 0)  # camera direction
     a = -(v(0,0,1)^g)*.002 # Camera up vector...Seem Z is pointing up :/ WTF !
     b = -(g^a) * 0.002 # The right vector, obtained via traditional cross-product
-    c = (a+b)*-256+g # TF ? See https://news.ycombinator.com/item?id=6425965 for more.
+    c = (a+b)*-256+g # WTF ? See https://news.ycombinator.com/item?id=6425965 for more.
 
     for y in range(511, -1, -1):
         for x in range(511, -1, -1):

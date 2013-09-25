@@ -31,9 +31,6 @@ ivo_world = [
 # G describes a 19 column 9 row "world" containing spheres, where a 1-bit is a sphere
 G = [int(l, 2) for l in reversed(world)]
 
-def Random():
-    return random.random()
-
 def Trace(o, d, t, n):
     """ The intersection test for line [o, v] """
     t = 1e9
@@ -45,14 +42,15 @@ def Trace(o, d, t, n):
         n = vector(0, 0, 1)
         m = 1
 
-    for k in range(18, -1, -1):
-        for j in range(8, -1, -1):
-            if G[j] & 1 << k:
+    for k in range(18, -1, -1): # 19 columns of possible spheres
+        for j in range(8, -1, -1): # 9 rows of possible spheres
+            if G[j] & 1 << k: # is the specific bit set? Draw a sphere
                 p = o + vector(-k, 0, -j-4)
                 b = p % d
                 c = p % p - 1
                 q = b*b-c
 
+                # .. only if the current ray hits it
                 if q > 0:
                     s = -b-sqrt(q)
 
@@ -89,6 +87,7 @@ def Sample(o, d):
 
     if m %2 == 1:
         h = h * .2
+        # red or white tile
         if (ceil(h.x)+ceil(h.y)) % 2 == 1:
             x = vector(3, 1, 1)
         else:
@@ -129,20 +128,23 @@ class color(vector):
 
 
 def main():
+    # print the ppm header (512x512 pixels, 255 colors)
     sys.stdout.write("P6 512 512 255 ")
 
     g = -vector(-6, -16, 0)  # camera direction
-    a = -(vector(0,0,1)^g)*.002
+    a = -(vector(0,0,1)^g)*.002 # camera up vector. Things are a bit reversed
     b = -(g^a) * 0.002
     c = (a+b)*-256+g
 
+    # where's the viewer located
     viewpoint = vector(17, 16, 8)
 
+    # start with a nearly black color
     rr,gg,bb = 13, 13, 13
-    for y in range(511, -1, -1):
-        for x in range(511, -1, -1):
-            p = color(rr, gg, bb) # actually a color
-            for r in range(63, -1, -1):
+    for y in range(511, -1, -1): # rows
+        for x in range(511, -1, -1): # colums
+            p = color(rr, gg, bb)
+            for r in range(63, -1, -1): # 64 rays per pixel
                 t = a*(random()-.5)*99+b*(random()-.5)*99
                 p = Sample(viewpoint+t,
                            -(t*-1+(a*(random()+x)+b*(y+random())+c)*16)
